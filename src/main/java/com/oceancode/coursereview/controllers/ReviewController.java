@@ -16,13 +16,13 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/courses/{courseId}/reviews")
+@RequestMapping("/api/reviews")
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewService reviewService;
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping(path = "/{courseId}")
     public ResponseEntity<ReviewResponse> createReview(
             @PathVariable UUID courseId,
             @Valid @RequestBody CreateReviewRequest request) {
@@ -44,7 +44,7 @@ public class ReviewController {
         return ResponseEntity.ok(convertToReviewResponse(savedReview));
     }
 
-    @GetMapping
+    @GetMapping(path = "/{courseId}")
     public List<ReviewResponse> getReviews(
             @PathVariable UUID courseId,
             @RequestParam(defaultValue = "rating_asc") String sortBy) {
@@ -55,7 +55,7 @@ public class ReviewController {
         return reviewResponses;
     }
 
-    @PutMapping(path = "/{reviewId}")
+    @PutMapping(path = "/{courseId}/{reviewId}")
     public ResponseEntity<ReviewResponse> updateReview(
             @PathVariable UUID courseId,
             @PathVariable UUID reviewId,
@@ -81,7 +81,7 @@ public class ReviewController {
         return ResponseEntity.ok(convertToReviewResponse(updatedReview));
     }
 
-    @PatchMapping(path = "/{reviewId}")
+    @PatchMapping(path = "/{courseId}/{reviewId}")
     public ResponseEntity<ReviewResponse> partialUpdateReview(
             @PathVariable UUID courseId,
             @PathVariable UUID reviewId,
@@ -106,7 +106,7 @@ public class ReviewController {
         return ResponseEntity.ok(convertToReviewResponse(updatedReview));
     }
 
-    @DeleteMapping(path = "/{reviewId}")
+    @DeleteMapping(path = "/{courseId}/{reviewId}")
     public ResponseEntity<Void> deleteReview(
             @PathVariable UUID courseId,
             @PathVariable UUID reviewId) {
@@ -119,7 +119,7 @@ public class ReviewController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/has-reviewed")
+    @GetMapping("/{courseId}/has-reviewed")
     public ResponseEntity<Boolean> hasUserReviewedCourse(@PathVariable UUID courseId) {
         // Get current authenticated user (same logic you already use)
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -130,6 +130,22 @@ public class ReviewController {
         boolean hasReviewed = reviewService.hasUserReviewed(courseId, currentUser);
 
         return ResponseEntity.ok(hasReviewed);
+    }
+
+    @GetMapping("/me")
+    public List<ReviewResponse> getReviewsByUser() {
+        // Get current authenticated user (same logic you already use)
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        User currentUser = userService.findByEmail(userEmail);
+
+        // This method will use your new existsBy... repository method
+        List<Review> userReviews = reviewService.getReviewsByUser(currentUser);
+
+        List<ReviewResponse> userReviewResponses = userReviews.stream()
+                .map(this::convertToReviewResponse)
+                .toList();
+        return userReviewResponses;
     }
 
     private ReviewResponse convertToReviewResponse(Review review) {
@@ -144,6 +160,8 @@ public class ReviewController {
                 .anonymous(review.getAnonymous())
                 .writtenBy(convertToUserDto(review.getWrittenBy(), review.getAnonymous()))
                 .courseId(review.getCourse().getId())
+                .courseNumber(review.getCourse().getCourseNumber())
+                .courseTitle(review.getCourse().getName())
                 .build();
     }
 

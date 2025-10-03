@@ -156,4 +156,9 @@ public class ReviewServiceImpl implements ReviewService {
     public boolean hasUserReviewed(UUID courseId, User currentUser) {
         return reviewRepository.existsByCourse_IdAndWrittenBy_Id(courseId, currentUser.getId());
     }
+
+    @Override
+    public List<Review> getReviewsByUser(User currentUser) {
+        return reviewRepository.findByWrittenBy_Id(currentUser.getId());
+    }
 }

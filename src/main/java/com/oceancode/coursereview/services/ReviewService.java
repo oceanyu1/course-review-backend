@@ -16,5 +16,7 @@ public interface ReviewService {
     void deleteReview(UUID courseId, UUID reviewId, User user);
 
     boolean hasUserReviewed(UUID courseId, User currentUser);
+
+    List<Review> getReviewsByUser(User currentUser);
 }
 

@@ -15,4 +15,6 @@ public interface ReviewRepository extends CrudRepository<Review, UUID> {
     List<Review> findByCourse_Id(UUID courseId, Sort sort);
 
     boolean existsByCourse_IdAndWrittenBy_Id(UUID courseId, UUID id);
+
+    List<Review> findByWrittenBy_Id(UUID userId);
 }

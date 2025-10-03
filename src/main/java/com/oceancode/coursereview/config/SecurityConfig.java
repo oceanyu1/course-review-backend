@@ -43,7 +43,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()                    // Anyone can log in/register
                         .requestMatchers(HttpMethod.GET, "/api/courses/**").permitAll() // Anyone can view courses
                         .requestMatchers(HttpMethod.GET, "/api/departments").permitAll() // Anyone can see departments
-                        .requestMatchers(HttpMethod.POST, "/api/courses/*/reviews").authenticated()  // Require auth for reviews
+                        .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()   // <- allow public GETs
+                        .requestMatchers(HttpMethod.POST, "/api/reviews/**").authenticated() // POST still needs auth
+                        .requestMatchers(HttpMethod.PUT, "/api/reviews/**").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/reviews/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/reviews/**").authenticated()
                         .anyRequest().authenticated()                                     // Everything else needs auth
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

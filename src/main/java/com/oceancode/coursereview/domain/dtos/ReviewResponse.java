@@ -23,5 +23,7 @@ public class ReviewResponse {
     private Instant lastEdited;
     private UserDto writtenBy;
     private UUID courseId;
+    private Integer courseNumber;
+    private String courseTitle;
     private Boolean anonymous;
 }
