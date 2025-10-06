@@ -42,7 +42,7 @@ public class CourseController {
 
     @GetMapping("/search")
     public List<CourseDto> searchCourses(
-            @RequestParam String query,
+            @RequestParam(required = false, defaultValue = "") String query,
             @RequestParam(required = false) String departmentCode,
             @RequestParam(defaultValue = "courseNumber_asc") String sortBy) {
         List<Course> courses = courseService.searchCourses(query, departmentCode, sortBy);

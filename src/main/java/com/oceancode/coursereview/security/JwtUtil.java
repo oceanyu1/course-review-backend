@@ -1,5 +1,6 @@
 package com.oceancode.coursereview.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -10,8 +11,11 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtil {
-    private String secretKey = "mySecretKeyForCourseReviewApp2024ThisIsAVeryLongSecretKeyThatMeetsTheHS512Requirements"; // Use environment variable in production
-    private int jwtExpiration = 86400000; // 24 hours in milliseconds
+    @Value("${jwt.secret:mySecretKeyForCourseReviewApp2024ThisIsAVeryLongSecretKeyThatMeetsTheHS512Requirements}")
+    private String secretKey;
+
+    @Value("${jwt.expiration:86400000}")
+    private int jwtExpiration;
 
     public String generateToken(String email) {
         return Jwts.builder()
