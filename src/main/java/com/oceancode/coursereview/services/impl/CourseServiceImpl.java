@@ -8,6 +8,7 @@ import com.oceancode.coursereview.services.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -60,4 +61,14 @@ public class CourseServiceImpl implements CourseService {
         course.setAverageRating(averageRating != null ? averageRating.floatValue() : 0.0f);
         courseRepository.save(course);
     }
+
+    @Transactional
+    public void recalculateAllCourseRatings() {
+        List<Course> allCourses = (List<Course>) courseRepository.findAll();
+
+        for (Course course : allCourses) {
+            updateCourseAverageRating(course.getId());
+        }
+    }
+
 }

@@ -14,4 +14,5 @@ public interface CourseService {
     List<Course> searchCourses(String query, String departmentCode, String sortBy);
     Optional<Course> getCourseById(UUID courseId);
     void updateCourseAverageRating(UUID courseId);
+    void recalculateAllCourseRatings();
 }
