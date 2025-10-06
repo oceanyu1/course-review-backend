@@ -15,7 +15,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping(path = "/api/courses")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:4173"}, allowCredentials = "true",
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "http://localhost:4173",
+        "https://course-review-frontend-ivory.vercel.app"}, allowCredentials = "true",
             allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST,
         RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 public class CourseController {
