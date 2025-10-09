@@ -6,9 +6,10 @@ import com.oceancode.coursereview.repositories.CourseRepository;
 import com.oceancode.coursereview.repositories.ReviewRepository;
 import com.oceancode.coursereview.services.CourseService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,15 +29,49 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<Course> searchCourses(String query, String departmentCode, String sortBy) {
-        if (departmentCode != null && !departmentCode.isEmpty()) {
-            // Search within specific department
-            return courseRepository.searchByQueryAndDepartment(query, departmentCode, sortBy);
+    public Page<Course> searchCourses(String query, String departmentCode, Pageable pageable) {
+        String processedQuery = query;
+        String effectiveDepartmentCode = departmentCode;
+
+        if (query != null && !query.isEmpty() && (departmentCode == null || departmentCode.trim().isEmpty())) {
+            // Check if query contains department code pattern (e.g., "COMP 1405")
+            String[] parts = query.trim().split("\\s+");
+            if (parts.length >= 2 && parts[0].matches("(?i)[A-Z]{3,4}")) {
+                effectiveDepartmentCode = parts[0].toUpperCase();
+                processedQuery = String.join(" ", java.util.Arrays.copyOfRange(parts, 1, parts.length));
+            }
+        }
+
+        // If no search query, return all courses (filtered by department if specified)
+        if (processedQuery == null || processedQuery.trim().isEmpty()) {
+            if (effectiveDepartmentCode != null && !effectiveDepartmentCode.trim().isEmpty()) {
+                List<Course> courses = getCoursesByDepartment(effectiveDepartmentCode,
+                        pageable.getSort().toString().replace(": ", "_").toLowerCase());
+
+                return new PageImpl<>(courses, pageable, courses.size());
+            } else {
+                // Return all courses across all departments
+                return courseRepository.findAll(pageable);
+            }
+        }
+
+        // Regular search with query
+        if (effectiveDepartmentCode != null && !effectiveDepartmentCode.trim().isEmpty()) {
+            List<Course> courses = courseRepository.searchByQueryAndDepartment(processedQuery,
+                    effectiveDepartmentCode, createSortString(pageable.getSort()));
+            return new PageImpl<>(courses, pageable, courses.size());
         } else {
-            // Search across all departments
-            return courseRepository.searchByQuery(query, sortBy);
+            return courseRepository.searchByQuery(processedQuery, pageable);
         }
     }
+
+    private String createSortString(Sort sort) {
+        if (sort.isEmpty()) return "courseNumber_asc";
+        Sort.Order order = sort.iterator().next();
+        String direction = order.getDirection().isAscending() ? "_asc" : "_desc";
+        return order.getProperty() + direction;
+    }
+
 
     private Sort createSort(String sortBy) {
         return switch (sortBy) {

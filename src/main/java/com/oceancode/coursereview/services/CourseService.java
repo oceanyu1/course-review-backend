@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface CourseService {
     List<Course> getCoursesByDepartment(String departmentCode, String sortBy);
-    List<Course> searchCourses(String query, String departmentCode, String sortBy);
+    Page<Course> searchCourses(String query, String departmentCode, Pageable pageable);
     Optional<Course> getCourseById(UUID courseId);
     void updateCourseAverageRating(UUID courseId);
     void recalculateAllCourseRatings();

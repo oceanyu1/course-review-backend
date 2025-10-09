@@ -6,6 +6,10 @@ import com.oceancode.coursereview.domain.entities.Course;
 import com.oceancode.coursereview.domain.entities.Department;
 import com.oceancode.coursereview.services.CourseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,14 +48,17 @@ public class CourseController {
     }
 
     @GetMapping("/search")
-    public List<CourseDto> searchCourses(
-            @RequestParam(required = false, defaultValue = "") String query,
+    public Page<CourseDto> searchCourses(
+            @RequestParam(required = false) String query,
             @RequestParam(required = false) String departmentCode,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "60") int size,
             @RequestParam(defaultValue = "courseNumber_asc") String sortBy) {
-        List<Course> courses = courseService.searchCourses(query, departmentCode, sortBy);
-        return courses.stream()
-                .map(this::convertToCourseDto)
-                .toList();
+        Sort sort = createSort(sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Course> coursePage = courseService.searchCourses(query, departmentCode, pageable);
+        return coursePage.map(this::convertToCourseDto);
     }
 
     private CourseDto convertToCourseDto(Course course) {
@@ -63,6 +70,16 @@ public class CourseController {
                 .averageRating(course.getAverageRating())
                 .description(course.getDescription())
                 .build();
+    }
+
+    private Sort createSort(String sortBy) {
+        return switch (sortBy) {
+            case "courseNumber_asc" -> Sort.by("courseNumber").ascending();
+            case "courseNumber_desc" -> Sort.by("courseNumber").descending();
+            case "rating_asc" -> Sort.by("averageRating").ascending();
+            case "rating_desc" -> Sort.by("averageRating").descending();
+            default -> Sort.by("courseNumber").ascending();
+        };
     }
 
     private DepartmentDto convertToDepartmentDto(Department department) {
