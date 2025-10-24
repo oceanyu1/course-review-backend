@@ -6,7 +6,8 @@
   <h3 align="center">RavensRate</h3>
 
   <p align="center">
-    RavensRate is a course review platform where Carleton University students can browse, review, and rate courses. This repo includes only the backend, you can access the frontend here.
+    RavensRate is a course review platform where Carleton University students can browse, review, and rate courses. This repo includes only the backend, you can access the frontend 
+    <a href="https://github.com/oceanyu1/course-review-frontend"><strong>here.</strong></a> The live site is also available at <a href="https://ravensrate.ca"><strong>ravensrate.ca</strong></a>.
     It provides secure authentication, RESTful endpoints, and PostgreSQL integration to support the full review lifecycle from browsing courses to submitting feedback.
     <br />
     <a href="https://github.com/oceanyu1/course-review-backend"><strong>Explore the project »</strong></a>
@@ -97,11 +98,8 @@ Biggest acklowledgement goes to Devtiro, specifically his <a href="https://www.y
 
 * [Devtiro](https://www.youtube.com/@devtiro)
 * [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
