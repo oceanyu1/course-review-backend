@@ -44,11 +44,10 @@ This is why I made RavensRate; to be able to plan your courses and see past advi
 course list, and a Carleton email is required to submit a review.
 
 The backend includes:
-* Review System: Users can post detailed reviews and rate courses on factors like difficulty, enjoyment, and usefulness.
-* Secure Authentication: Implemented JWT-based authentication with Spring Security, requiring Carleton email for review submission.
-* RESTful API Design: Provides clean, well-documented endpoints for frontend integration and third-party use.
-* Database Integration: Uses PostgreSQL with Spring Data JPA for relational data storage and efficient querying.
-* Clean, Modular Codebase: Follows DRY and Separation of Concerns principles, with controllers, services, and repositories.
+* **Review System**: Users can post detailed reviews and rate courses on factors like difficulty, enjoyment, and usefulness.
+* **Secure Authentication**: Implemented JWT-based authentication with Spring Security, requiring Carleton email for review submission.
+* **RESTful API Design**: Provides clean, well-documented endpoints for frontend integration and third-party use.
+* **PostgreSQL Database**: Uses PostgreSQL with Spring Data JPA for relational data storage and efficient querying.
 
 ### Built With
 * [![Java][Java]][Java-url]
